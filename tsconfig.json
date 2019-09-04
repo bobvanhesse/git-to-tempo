@@ -10,8 +10,7 @@
     "keyofStringsOnly": true,
     "lib": [
       "dom",
-      "es6",
-      "es7"
+      "esnext"
     ],
     "module": "commonjs",
     "moduleResolution": "node",

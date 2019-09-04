@@ -1,5 +1,7 @@
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import R from 'ramda';
+
+import { TimePeriod, Period } from './helpers';
 
 export interface GitConfig {
   author: string;
@@ -11,21 +13,21 @@ export interface GitToTempoConfig {
   locale?: string;
   prefix: string;
   reportingPeriod: YearWeek;
-  workingHours: WorkingHours;
+  tempo: TempoConfig;
+  workingHours: WorkingSchedule;
 }
 
-export interface TimePeriod {
-  start: string;
-  stop: string;
+export type StaticWorkingDay = Period<string>;
+
+export interface TempoConfig {
+  attributes?: Object;
+  workerId: string;
 }
 
-export interface WorkingHours {
-  [weekDay: string]: TimePeriod;
-}
+export type WorkingDay = TimePeriod;
 
-export interface WeekLimits {
-  end: Moment;
-  start: Moment;
+export interface WorkingSchedule {
+  [weekDay: string]: StaticWorkingDay;
 }
 
 export interface YearWeek {
@@ -33,24 +35,29 @@ export interface YearWeek {
   year: number;
 }
 
-const weekLimitToMoment = (config: GitToTempoConfig) => (limit: 'start' | 'end'): Moment => {
-  return moment([
-    config.reportingPeriod.year,
-    config.reportingPeriod.week,
-    R.compose(
-      ([day, timePeriod]) => `${day} ${timePeriod[limit]}`,
-      R[limit === 'start' ? 'head' : 'last'],
-      R.sortBy(R.head),
-      R.toPairs,
-      R.prop('workingHours')
-    )(config)
-  ].join('.'), 'YYYY.W.E hh:mm')
-};
+type DayEntry = [string, StaticWorkingDay];
 
+const dayEntryToWorkingDay = R.curryN(2, (config: GitToTempoConfig, [day, timePeriod]: DayEntry): WorkingDay => {
+  return R.map((time: string) => {
+    return moment(
+      `${config.reportingPeriod.year}.${config.reportingPeriod.week}.${day} ${time}`,
+      'YYYY.W.E HH:mm'
+    );
+  }, timePeriod);
+});
 
-export const configToWeekLimits = (config: GitToTempoConfig): WeekLimits => {
-  return {
-    end: weekLimitToMoment(config)('end'),
-    start: weekLimitToMoment(config)('start'),
-  };
+export const getWeek = (config: GitToTempoConfig): WorkingDay[] => {
+  const convertDayEntryToWorkingDay = dayEntryToWorkingDay(config);
+  return R.compose<
+    GitToTempoConfig,
+    WorkingSchedule,
+    DayEntry[],
+    DayEntry[],
+    WorkingDay[]
+  >(
+    R.map(convertDayEntryToWorkingDay),
+    R.sortBy(R.head),
+    R.toPairs,
+    R.prop('workingHours')
+  )(config);
 };

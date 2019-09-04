@@ -2,16 +2,16 @@ import gitlog, { Commit } from 'gitlog';
 import moment from 'moment';
 import R from 'ramda';
 
-import { commitToLog, GitLogOptions, Log } from "./lib/logs";
-import { configToWeekLimits, GitToTempoConfig, WeekLimits } from './lib/config';
-import { DATE_FORMAT_GIT, isFormattedCommit, leaveOutNextWeekCommitsExceptFirst } from './lib/commits';
+import { GitLogOptions, Log, storiesToLogs } from "./lib/logs";
+import { getWeek, GitToTempoConfig, WorkingDay } from './lib/config';
+import { commitsToStories, DATE_FORMAT_GIT, Story } from './lib/commits';
 
 const configToGitLogOptions = (config: GitToTempoConfig): GitLogOptions => {
-  const weekLimits: WeekLimits = configToWeekLimits(config);
+  const week: WorkingDay[] = getWeek(config);
   return {
     all: true,
     author: config.git.author,
-    before: weekLimits.end
+    before: R.last(week).end
       .add(1, 'week')
       .format(DATE_FORMAT_GIT),
     execOptions: {
@@ -19,8 +19,9 @@ const configToGitLogOptions = (config: GitToTempoConfig): GitLogOptions => {
     },
     fields: ['authorDate', 'rawBody'],
     nameStatus: false,
+    number: 999,
     repo: config.git.projectPath,
-    since: weekLimits.start
+    since: R.head(week).start
       .format(DATE_FORMAT_GIT),
   };
 };
@@ -38,13 +39,14 @@ export const gitToTempo = async (config: Readonly<GitToTempoConfig>): Promise<Lo
           reject(error);
           return;
         }
-        resolve(
-          R.compose(
-            R.map<Commit, Log>(commitToLog(config)),
-            leaveOutNextWeekCommitsExceptFirst(config),
-            R.filter<Commit, 'array'>(isFormattedCommit(config))
-          )(commits)
-        );
+        resolve(R.compose<
+          Commit[],
+          Story[],
+          Log[]
+        >(
+          storiesToLogs(config),
+          commitsToStories(config)
+        )(commits));
       }
     );
   });

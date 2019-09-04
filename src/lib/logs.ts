@@ -47,10 +47,8 @@ export const storiesToLogs = R.curryN(2, (config: GitToTempoConfig, stories: Sto
       )
       .map((day) => ({
         ...storyConfig,
-        timeSpentSeconds: firstMoment(story.period.end, day.end).diff(
-          lastMoment(day.start, story.period.start),
-          'second'
-        ),
+        timeSpentSeconds: firstMoment(story.period.end, day.end)
+          .diff(lastMoment(day.start, story.period.start), 'second'),
         started: day.start.format(DATE_FORMAT_TEMPO),
       }));
   })

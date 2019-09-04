@@ -41,16 +41,17 @@ export const storiesToLogs = R.curryN(2, (config: GitToTempoConfig, stories: Sto
       issueKey: story.issueKey,
     };
     return getWeek(config)
-      .filter((day) => story.period.start.isBefore(day.end) && story.period.end.isAfter(day.start))
-      .map((day) => {
-        return {
-          ...storyConfig,
-          timeSpentSeconds: firstMoment(story.period.end, day.end).diff(
-            lastMoment(day.start, story.period.start),
-            'second'
-          ),
-          started: day.start.format(DATE_FORMAT_TEMPO),
-        };
-      });
+      .filter((day) =>
+        story.period.start.isBefore(day.end) &&
+        story.period.end.isAfter(day.start)
+      )
+      .map((day) => ({
+        ...storyConfig,
+        timeSpentSeconds: firstMoment(story.period.end, day.end).diff(
+          lastMoment(day.start, story.period.start),
+          'second'
+        ),
+        started: day.start.format(DATE_FORMAT_TEMPO),
+      }));
   })
 });

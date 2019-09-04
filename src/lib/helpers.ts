@@ -11,7 +11,7 @@ export type TimePeriod = Period<Moment>;
 
 export const firstMoment = (...moments: NonEmptyArray<Moment>): Moment => {
   return moments.reduce((first, check, checkIndex) => {
-    return checkIndex === 0 || check.isBefore(first as unknown as Moment)
+    return checkIndex === 0 || check.isBefore(first)
       ? check
       : first;
   }, moment(0, 'x'));
@@ -19,7 +19,7 @@ export const firstMoment = (...moments: NonEmptyArray<Moment>): Moment => {
 
 export const lastMoment = (...moments: NonEmptyArray<Moment>): Moment => {
   return moments.reduce((last, check, checkIndex) => {
-    return checkIndex === 0 || check.isAfter(last as unknown as Moment)
+    return checkIndex === 0 || check.isAfter(last)
       ? check
       : last;
   }, moment(0, 'x'));

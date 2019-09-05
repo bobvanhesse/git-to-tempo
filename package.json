@@ -11,13 +11,9 @@
     "tracking"
   ],
   "main": "./dist/index.js",
-  "files": [
-    "./dist/**/*"
-  ],
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc -p .",
-    "prepare": "npm run build",
     "start": "ts-node -p .",
     "test": "true"
   },

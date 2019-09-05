@@ -4,7 +4,8 @@ import R from 'ramda';
 
 import { GitLogOptions, Log, storiesToLogs } from "./lib/logs";
 import { getWeek, GitToTempoConfig, WorkingDay } from './lib/config';
-import { commitsToStories, DATE_FORMAT_GIT, Story } from './lib/commits';
+import { commitsToStories, DATE_FORMAT_GIT } from './lib/commits';
+import { Story } from './lib/story';
 
 const configToGitLogOptions = (config: GitToTempoConfig): GitLogOptions => {
   const week: WorkingDay[] = getWeek(config);

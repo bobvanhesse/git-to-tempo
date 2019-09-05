@@ -2,6 +2,12 @@ import moment, { Moment } from "moment";
 
 export type NonEmptyArray<T> = [T, ...T[]];
 
+export type NonOptionalKeys<T> = {
+  [k in keyof T]-?: undefined extends T[k]
+    ? never
+    : k
+}[keyof T];
+
 export interface Period<T> {
   start: T;
   end: T;

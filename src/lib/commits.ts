@@ -3,13 +3,7 @@ import moment from 'moment';
 import R from 'ramda';
 
 import { GitToTempoConfig } from './config';
-import { TimePeriod } from './helpers';
-
-export interface Story {
-  commit: Commit;
-  issueKey: string;
-  period: TimePeriod;
-}
+import { Story } from './story';
 
 export const DATE_FORMAT_GIT: Readonly<string> = 'YYYY-MM-DD HH:mm:ss ZZ';
 
@@ -33,7 +27,6 @@ export const getStoryRegEx = (config: GitToTempoConfig): RegExp => {
   return new RegExp(`^\\s*(${config.prefix}-\\d+):?\\s+`);
 };
 
-export const isFormattedCommit = (config: GitToTempoConfig) =>
-  (commit: Commit): boolean => {
-    return commit.rawBody.match(getStoryRegEx(config)) instanceof Array;
-  };
+export const isFormattedCommit = R.curryN(2, (config: GitToTempoConfig, commit: Commit): boolean => {
+  return commit.rawBody.match(getStoryRegEx(config)) instanceof Array;
+});

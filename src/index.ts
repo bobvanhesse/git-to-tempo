@@ -20,7 +20,7 @@ const configToGitLogOptions = (config: GitToTempoConfig): GitLogOptions => {
     },
     fields: ['authorDate', 'rawBody'],
     nameStatus: false,
-    number: 999,
+    number: 10 ** 3,
     repo: config.git.projectPath,
     since: R.head(week).start
       .format(DATE_FORMAT_GIT),
@@ -54,3 +54,45 @@ export const gitToTempo = async (config: Readonly<GitToTempoConfig>): Promise<Lo
 };
 
 export {gitToTempo as default, Log};
+
+(async () => {
+  try {
+    console.log(await gitToTempo({
+      git: {
+        author: 'Bob van Hesse',
+        projectPath: '/Users/Bob/projects/governance',
+      },
+      locale: 'nl',
+      prefix: 'GOV',
+      reportingPeriod: {
+        week: 33,
+        year: 2019,
+      },
+      tempo: {
+        attributes: {
+          _Account_: {
+            workAttributeId: 2,
+            value: '2GEARSNONB',
+          },
+        },
+        workerId: '5d14cdd1f46aa30c271c9a75',
+      },
+      workingHours: {
+        '1': {
+          start: '09:00',
+          end: '17:00',
+        },
+        '2': {
+          start: '09:00',
+          end: '17:00',
+        },
+        '3': {
+          start: '09:00',
+          end: '13:00',
+        },
+      },
+    }));
+  } catch(error) {
+    console.error(error.message);
+  }
+})();

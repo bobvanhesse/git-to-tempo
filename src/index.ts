@@ -2,9 +2,9 @@ import gitlog, { Commit } from 'gitlog';
 import { default as moment } from 'moment';
 import { compose, head, last } from 'ramda';
 
-import { GitLogOptions, Log, storiesToLogs } from "./lib/logs";
+import { GitLogOptions, Log, storiesToLogs } from './lib/log';
 import { getWeek, GitToTempoConfig, WorkingDay } from './lib/config';
-import { commitsToStories, DATE_FORMAT_GIT } from './lib/commits';
+import { commitsToStories, DATE_FORMAT_GIT } from './lib/commit';
 import { Story } from './lib/story';
 
 const configToGitLogOptions = (config: GitToTempoConfig): GitLogOptions => {

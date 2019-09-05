@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/bobvanhesse/git-to-tempo.svg?branch=master)](https://travis-ci.org/bobvanhesse/git-to-tempo)
+
 # Git to Tempo
 Converts your git log into Tempo entries based on your working hours.
 

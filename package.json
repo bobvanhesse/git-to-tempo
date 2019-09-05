@@ -2,12 +2,22 @@
   "name": "git-to-tempo",
   "version": "1.0.0",
   "description": "Convert your git history to Tempo time tracking logs",
-  "keywords": ["atlassian", "git", "logs", "tempo", "time", "tracking"],
+  "keywords": [
+    "atlassian",
+    "git",
+    "logs",
+    "tempo",
+    "time",
+    "tracking"
+  ],
   "main": "./dist/index.js",
-  "files": ["./dist/**/*"],
-  "types" : "./dist/index.d.ts",
+  "files": [
+    "./dist/**/*"
+  ],
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc -p .",
+    "prepare": "npm run build",
     "start": "ts-node -p ."
   },
   "author": "Bob van Hesse <bob@vanhesse.nl>",
@@ -24,8 +34,8 @@
     "typescript": "3.6.2"
   },
   "repository": {
-   "type": "git",
-   "url": "git+https://github.com/bobvanhesse/git-to-tempo.git"
+    "type": "git",
+    "url": "git+https://github.com/bobvanhesse/git-to-tempo.git"
   },
   "bugs": {
     "url": "https://github.com/bobvanhesse/git-to-tempo/issues"

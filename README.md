@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/bobvanhesse/git-to-tempo.svg?branch=master)](https://travis-ci.org/bobvanhesse/git-to-tempo)
-
 # Git to Tempo
 Converts your git log into Tempo entries based on your working hours.
+
+[![Build Status](https://travis-ci.org/bobvanhesse/git-to-tempo.svg?branch=master)](https://travis-ci.org/bobvanhesse/git-to-tempo)
 
 ## Background
 The conversion of hours spent on development to a time tracker entry can be a
@@ -31,3 +31,47 @@ approximation, this module will give you just what you need. These generated
 time logs will provide you with a representation that is __arguably__ just as
 questionable as customly written entries. Whether you want to use the logs as
 a starting point or as a final report is completely up to you!
+
+## Usage
+In order to be able to use this module, you will need to import the `gitToTempo` function, and provide the configuration object.
+
+```js
+const gitToTempo = require('git-to-tempo');
+
+(async () => {
+  try {
+    const tempoLogs = await gitToTempo({
+      git: {
+        author: 'Your Name',
+        projectPath: '/path/to/project/root/directory',
+      },
+      locale: 'nl',
+      prefix: 'ABC',
+      reportingPeriod: {
+        week: 1,
+        year: 2000,
+      },
+      tempo: {
+        workerId: '1a23bcd4e56fg78h901i2j34',
+      },
+      workingHours: {
+        '1': {
+          start: '09:00',
+          end: '17:00',
+        },
+        '2': {
+          start: '09:00',
+          end: '17:00',
+        },
+        '3': {
+          start: '09:00',
+          end: '13:00',
+        },
+      },
+    });
+    console.log(tempoLogs);
+  } catch(error) {
+    console.error(error.message);
+  }
+})();
+```

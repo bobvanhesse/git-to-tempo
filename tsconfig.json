@@ -3,6 +3,7 @@
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
+    "baseUrl": ".",
     "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -21,13 +22,17 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "dist",
+    "paths": {
+      "*": ["./@types/*"],
+      "ramda": ["./node_modules/@types/ramda/index"],
+      "ramda/src/*" : ["./node_modules/@types/ramda-fallback/index"]
+    },
     "removeComments": true,
     "rootDir": "src",
     "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true,
-    "target": "es5",
-    "types": ["./@types/gitlog"]
+    "target": "es5"
   },
   "include": ["src/**/*.ts"]
 }

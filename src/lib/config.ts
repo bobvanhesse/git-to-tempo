@@ -1,7 +1,8 @@
 import { default as moment } from 'moment';
 import { curryN, compose, head, map, prop, sortBy, toPairs } from 'ramda';
+import { RequireAtLeastOne } from 'type-fest';
 
-import { TimePeriod, Period } from './helpers';
+import { Period, TimePeriod, NonEmptyArray } from './helpers';
 
 type DayEntry = [string, StaticWorkingDay];
 
@@ -26,11 +27,13 @@ export interface TempoConfig {
   workerId: string;
 }
 
+export type WeekDayNumber = '1' | '2' | '3' | '4' | '5' | '6' | '7';
+
 export type WorkingDay = TimePeriod;
 
-export interface WorkingSchedule {
-  [weekDay: string]: StaticWorkingDay;
-}
+export type WorkingSchedule = RequireAtLeastOne<{
+  [D in WeekDayNumber]: StaticWorkingDay;
+}>;
 
 export interface YearWeek {
   week: number;
@@ -46,7 +49,7 @@ const dayEntryToWorkingDay = curryN(2, (config: GitToTempoConfig, [day, timePeri
   }, timePeriod);
 });
 
-export const getWeek = (config: GitToTempoConfig): WorkingDay[] => {
+export const getWeek = (config: GitToTempoConfig): NonEmptyArray<WorkingDay> => {
   const convertDayEntryToWorkingDay = dayEntryToWorkingDay(config);
   return compose<
     GitToTempoConfig,
@@ -56,8 +59,8 @@ export const getWeek = (config: GitToTempoConfig): WorkingDay[] => {
     WorkingDay[]
   >(
     map(convertDayEntryToWorkingDay),
-    sortBy(head),
+    sortBy<DayEntry>(head),
     toPairs,
     prop('workingHours')
-  )(config);
+  )(config) as NonEmptyArray<WorkingDay>;
 };

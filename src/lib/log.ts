@@ -1,24 +1,9 @@
-import { adjust, curryN, head, partial, propEq, sum } from 'ramda';
+import { curryN, head, partial, prop, propEq, sum, map } from 'ramda';
+import { adjust } from 'ramda/src/adjust';
 
 import { GitToTempoConfig, getWeek, WorkingDay } from './config';
-import { firstMoment, lastMoment, NonOptionalKeys } from './helpers';
+import { firstMoment, lastMoment, NonEmptyArray, NonOptionalKeys } from './helpers';
 import { Story, storyWasInProgressOn } from './story';
-
-export interface GitLogExecOptions {
-  maxBuffer: number;
-}
-
-export interface GitLogOptions {
-  all: boolean;
-  author: string;
-  before: string;
-  execOptions: GitLogExecOptions;
-  fields: string[];
-  nameStatus: boolean;
-  number: number;
-  repo: string;
-  since: string;
-}
 
 export interface Log {
   attributes?: Object;
@@ -49,15 +34,13 @@ const mergeDuplicatesReducer = (logs: Log[], log: Log): Log[] => {
     : [...logs, log];
 };
 
-export const mergeLogs = (...logs: [Log, ...Log[]]) => {
-  const mapProp = <T extends NonOptionalKeys<Log>>(prop: T): Log[T][] => {
-    return logs.map((log) => log[prop]);
-  };
+export const mergeLogs = (...logs: NonEmptyArray<Log>) => {
+  const mapProp: <T extends NonOptionalKeys<Log>>(p: T) => Log[T][] = map(prop);
   return {
     ...head(logs),
     timeSpentSeconds: sum(mapProp('timeSpentSeconds')),
     comment: mapProp('comment').join(' '),
-  };
+  } as Log;
 };
 
 export const storiesToLogs = curryN(2, (config: GitToTempoConfig, stories: Story[]): Log[] => {

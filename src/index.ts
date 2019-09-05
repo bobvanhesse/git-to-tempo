@@ -1,18 +1,19 @@
-import gitlog, { Commit } from 'gitlog';
+import gitlog, { Commit, GitLogOptions } from 'gitlog';
 import { default as moment } from 'moment';
 import { compose, head, last } from 'ramda';
 
-import { GitLogOptions, Log, storiesToLogs } from './lib/log';
+import { Log, storiesToLogs } from './lib/log';
 import { getWeek, GitToTempoConfig, WorkingDay } from './lib/config';
 import { commitsToStories, DATE_FORMAT_GIT } from './lib/commit';
+import { NonEmptyArray } from './lib/helpers';
 import { Story } from './lib/story';
 
 const configToGitLogOptions = (config: GitToTempoConfig): GitLogOptions => {
-  const week: WorkingDay[] = getWeek(config);
+  const week: NonEmptyArray<WorkingDay> = getWeek(config);
   return {
     all: true,
     author: config.git.author,
-    before: last(week).end
+    before: (last(week) as WorkingDay).end
       .add(1, 'week')
       .format(DATE_FORMAT_GIT),
     execOptions: {
@@ -22,7 +23,7 @@ const configToGitLogOptions = (config: GitToTempoConfig): GitLogOptions => {
     nameStatus: false,
     number: 10 ** 3,
     repo: config.git.projectPath,
-    since: head(week).start
+    since: (head(week) as WorkingDay).start
       .format(DATE_FORMAT_GIT),
   };
 };
@@ -53,4 +54,6 @@ export const gitToTempo = async (config: Readonly<GitToTempoConfig>): Promise<Lo
   });
 };
 
-export {gitToTempo as default, Log};
+export {Log};
+
+export default gitToTempo;

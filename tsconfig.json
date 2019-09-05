@@ -20,13 +20,15 @@
     "noImplicitThis": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "outDir": "build",
+    "outDir": "dist",
     "removeComments": true,
     "rootDir": "src",
+    "skipLibCheck": true,
     "sourceMap": true,
+    "strict": true,
     "strictNullChecks": true,
-    "target": "es6",
+    "target": "es5",
     "types": ["./src/@types/gitlog"]
   },
-  "include": ["src"]
+  "include": ["src/**/*.ts"]
 }

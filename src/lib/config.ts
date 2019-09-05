@@ -1,7 +1,9 @@
-import moment from 'moment';
-import R from 'ramda';
+import { default as moment } from 'moment';
+import { curryN, compose, head, map, prop, sortBy, toPairs } from 'ramda';
 
 import { TimePeriod, Period } from './helpers';
+
+type DayEntry = [string, StaticWorkingDay];
 
 export interface GitConfig {
   author: string;
@@ -35,10 +37,8 @@ export interface YearWeek {
   year: number;
 }
 
-type DayEntry = [string, StaticWorkingDay];
-
-const dayEntryToWorkingDay = R.curryN(2, (config: GitToTempoConfig, [day, timePeriod]: DayEntry): WorkingDay => {
-  return R.map((time: string) => {
+const dayEntryToWorkingDay = curryN(2, (config: GitToTempoConfig, [day, timePeriod]: DayEntry): WorkingDay => {
+  return map((time: string) => {
     return moment(
       `${config.reportingPeriod.year}.${config.reportingPeriod.week}.${day} ${time}`,
       'YYYY.W.E HH:mm'
@@ -48,16 +48,16 @@ const dayEntryToWorkingDay = R.curryN(2, (config: GitToTempoConfig, [day, timePe
 
 export const getWeek = (config: GitToTempoConfig): WorkingDay[] => {
   const convertDayEntryToWorkingDay = dayEntryToWorkingDay(config);
-  return R.compose<
+  return compose<
     GitToTempoConfig,
     WorkingSchedule,
     DayEntry[],
     DayEntry[],
     WorkingDay[]
   >(
-    R.map(convertDayEntryToWorkingDay),
-    R.sortBy(R.head),
-    R.toPairs,
-    R.prop('workingHours')
+    map(convertDayEntryToWorkingDay),
+    sortBy(head),
+    toPairs,
+    prop('workingHours')
   )(config);
 };

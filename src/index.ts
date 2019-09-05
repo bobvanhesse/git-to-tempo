@@ -1,6 +1,6 @@
 import gitlog, { Commit } from 'gitlog';
-import moment from 'moment';
-import R from 'ramda';
+import { default as moment } from 'moment';
+import { compose, head, last } from 'ramda';
 
 import { GitLogOptions, Log, storiesToLogs } from "./lib/logs";
 import { getWeek, GitToTempoConfig, WorkingDay } from './lib/config';
@@ -12,7 +12,7 @@ const configToGitLogOptions = (config: GitToTempoConfig): GitLogOptions => {
   return {
     all: true,
     author: config.git.author,
-    before: R.last(week).end
+    before: last(week).end
       .add(1, 'week')
       .format(DATE_FORMAT_GIT),
     execOptions: {
@@ -22,7 +22,7 @@ const configToGitLogOptions = (config: GitToTempoConfig): GitLogOptions => {
     nameStatus: false,
     number: 10 ** 3,
     repo: config.git.projectPath,
-    since: R.head(week).start
+    since: head(week).start
       .format(DATE_FORMAT_GIT),
   };
 };
@@ -40,7 +40,7 @@ export const gitToTempo = async (config: Readonly<GitToTempoConfig>): Promise<Lo
           reject(error);
           return;
         }
-        resolve(R.compose<
+        resolve(compose<
           Commit[],
           Story[],
           Log[]

@@ -1,13 +1,13 @@
 import { Commit } from 'gitlog';
-import moment from 'moment';
-import R from 'ramda';
+import { default as moment } from 'moment';
+import { curryN } from 'ramda';
 
 import { GitToTempoConfig } from './config';
 import { Story } from './story';
 
 export const DATE_FORMAT_GIT: Readonly<string> = 'YYYY-MM-DD HH:mm:ss ZZ';
 
-export const commitsToStories = R.curryN(2, (config: GitToTempoConfig, commits: Commit[]): Story[] => {
+export const commitsToStories = curryN(2, (config: GitToTempoConfig, commits: Commit[]): Story[] => {
   return commits
     .filter(isFormattedCommit(config))
     .reverse()
@@ -27,6 +27,6 @@ export const getStoryRegEx = (config: GitToTempoConfig): RegExp => {
   return new RegExp(`^\\s*(${config.prefix}-\\d+):?\\s+`);
 };
 
-export const isFormattedCommit = R.curryN(2, (config: GitToTempoConfig, commit: Commit): boolean => {
+export const isFormattedCommit = curryN(2, (config: GitToTempoConfig, commit: Commit): boolean => {
   return commit.rawBody.match(getStoryRegEx(config)) instanceof Array;
 });

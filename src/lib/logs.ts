@@ -1,4 +1,4 @@
-import R from 'ramda';
+import { adjust, curryN, head, partial, propEq, sum } from 'ramda';
 
 import { GitToTempoConfig, getWeek, WorkingDay } from './config';
 import { firstMoment, lastMoment, NonOptionalKeys } from './helpers';
@@ -31,7 +31,7 @@ export interface Log {
 
 export const DATE_FORMAT_TEMPO: Readonly<string> = 'YYYY-MM-DD';
 
-export const createLog = R.curryN(3, (config: GitToTempoConfig, story: Story, day: WorkingDay): Log => ({
+export const createLog = curryN(3, (config: GitToTempoConfig, story: Story, day: WorkingDay): Log => ({
   ...config.tempo,
   comment: story.commit.rawBody,
   issueKey: story.issueKey,
@@ -40,31 +40,31 @@ export const createLog = R.curryN(3, (config: GitToTempoConfig, story: Story, da
     .diff(lastMoment(day.start, story.period.start), 'second'),
 }));
 
-const mergeDuplicates = (logs: Log[], log: Log): Log[] => {
+const mergeDuplicatesReducer = (logs: Log[], log: Log): Log[] => {
   const updateLogIndex = logs.findIndex((compareLog) =>
-    ['issueKey', 'started'].every((prop) => R.propEq(prop, log, compareLog))
+    ['issueKey', 'started'].every((prop) => propEq(prop, log, compareLog))
   );
   return updateLogIndex >= 0
-    ? R.adjust(updateLogIndex, R.partial(mergeLogs, [log]), logs)
+    ? adjust(updateLogIndex, partial(mergeLogs, [log]), logs)
     : [...logs, log];
 };
 
-const mergeLogs = (...logs: [Log, ...Log[]]) => {
+export const mergeLogs = (...logs: [Log, ...Log[]]) => {
   const mapProp = <T extends NonOptionalKeys<Log>>(prop: T): Log[T][] => {
     return logs.map((log) => log[prop]);
   };
   return {
-    ...R.head(logs),
-    timeSpentSeconds: R.sum(mapProp('timeSpentSeconds')),
+    ...head(logs),
+    timeSpentSeconds: sum(mapProp('timeSpentSeconds')),
     comment: mapProp('comment').join(' '),
   };
 };
 
-export const storiesToLogs = R.curryN(2, (config: GitToTempoConfig, stories: Story[]): Log[] => {
+export const storiesToLogs = curryN(2, (config: GitToTempoConfig, stories: Story[]): Log[] => {
   return stories.flatMap((story) => {
     return getWeek(config)
       .filter((day) => storyWasInProgressOn(story, day))
       .map<Log>((day) => createLog(config, story, day))
-      .reduce<Log[]>(mergeDuplicates, []);
+      .reduce<Log[]>(mergeDuplicatesReducer, []);
   })
 });

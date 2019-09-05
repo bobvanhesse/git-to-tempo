@@ -4,6 +4,7 @@
   "description": "Convert your git history to Tempo time tracking logs",
   "keywords": ["atlassian", "git", "logs", "tempo", "time", "tracking"],
   "main": "./dist/index.js",
+  "files": ["./dist/**/*"],
   "types" : "./dist/index.d.ts",
   "scripts": {
     "build": "tsc -p .",

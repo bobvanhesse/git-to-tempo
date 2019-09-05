@@ -27,7 +27,7 @@
     "strict": true,
     "strictNullChecks": true,
     "target": "es5",
-    "types": ["./src/@types/gitlog"]
+    "types": ["./@types/gitlog"]
   },
   "include": ["src/**/*.ts"]
 }

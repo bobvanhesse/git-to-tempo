@@ -38,7 +38,7 @@ Not all commits are relevant for your time tracking. Commits that you want to in
 
 Example of commit that is filtered out:
 ```
-Fixed indenting, remove trailing comma's
+Fixed indenting, remove trailing commas
 ```
 
 Example of commit that will be included:

@@ -2,7 +2,7 @@ import { curryN, head, partial, prop, propEq, sum, map } from 'ramda';
 import { adjust } from 'ramda/src/adjust';
 
 import { GitToTempoConfig, getWeek, WorkingDay } from './config';
-import { firstMoment, lastMoment, NonEmptyArray, NonOptionalKeys } from './helpers';
+import { firstMoment, lastMoment, NonOptionalKeys } from './helpers';
 import { Story, storyWasInProgressOn } from './story';
 
 export interface Log {
@@ -34,13 +34,13 @@ const mergeDuplicatesReducer = (logs: Log[], log: Log): Log[] => {
     : [...logs, log];
 };
 
-export const mergeLogs = (...logs: NonEmptyArray<Log>) => {
+export const mergeLogs = (...logs: Log[]): Log => {
   const mapProp: <T extends NonOptionalKeys<Log>>(p: T) => Log[T][] = map(prop);
   return {
-    ...head(logs),
+    ...head(logs) as Log,
     timeSpentSeconds: sum(mapProp('timeSpentSeconds')),
     comment: mapProp('comment').join(' '),
-  } as Log;
+  };
 };
 
 export const storiesToLogs = curryN(2, (config: GitToTempoConfig, stories: Story[]): Log[] => {

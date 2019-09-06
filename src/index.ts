@@ -5,11 +5,10 @@ import { compose, head, last } from 'ramda';
 import { Log, storiesToLogs } from './lib/log';
 import { getWeek, GitToTempoConfig, WorkingDay } from './lib/config';
 import { commitsToStories, DATE_FORMAT_GIT } from './lib/commit';
-import { NonEmptyArray } from './lib/helpers';
 import { Story } from './lib/story';
 
 const configToGitLogOptions = (config: GitToTempoConfig): GitLogOptions => {
-  const week: NonEmptyArray<WorkingDay> = getWeek(config);
+  const week: WorkingDay[] = getWeek(config);
   return {
     all: true,
     author: config.git.author,
@@ -54,6 +53,6 @@ export const gitToTempo = async (config: Readonly<GitToTempoConfig>): Promise<Lo
   });
 };
 
-export {Log};
+export { Log };
 
 export default gitToTempo;

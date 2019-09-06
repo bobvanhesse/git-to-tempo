@@ -1,7 +1,5 @@
 import { default as moment, Moment } from 'moment';
 
-export type NonEmptyArray<T> = [T, ...T[]];
-
 export type NonOptionalKeys<T> = {
   [k in keyof T]-?: undefined extends T[k]
     ? never
@@ -15,7 +13,7 @@ export interface Period<T> {
 
 export type TimePeriod = Period<Moment>;
 
-export const firstMoment = (...moments: NonEmptyArray<Moment>): Moment => {
+export const firstMoment = (...moments: Moment[]): Moment => {
   return moments.reduce((first, check, checkIndex) => {
     return checkIndex === 0 || check.isBefore(first)
       ? check
@@ -23,7 +21,7 @@ export const firstMoment = (...moments: NonEmptyArray<Moment>): Moment => {
   }, moment(0, 'x'));
 };
 
-export const lastMoment = (...moments: NonEmptyArray<Moment>): Moment => {
+export const lastMoment = (...moments: Moment[]): Moment => {
   return moments.reduce((last, check, checkIndex) => {
     return checkIndex === 0 || check.isAfter(last)
       ? check

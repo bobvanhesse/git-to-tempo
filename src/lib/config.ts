@@ -2,7 +2,7 @@ import { default as moment } from 'moment';
 import { curryN, compose, head, map, prop, sortBy, toPairs } from 'ramda';
 import { RequireAtLeastOne } from 'type-fest';
 
-import { Period, TimePeriod, NonEmptyArray } from './helpers';
+import { Period, TimePeriod } from './helpers';
 
 type DayEntry = [string, StaticWorkingDay];
 
@@ -49,7 +49,7 @@ const dayEntryToWorkingDay = curryN(2, (config: GitToTempoConfig, [day, timePeri
   }, timePeriod);
 });
 
-export const getWeek = (config: GitToTempoConfig): NonEmptyArray<WorkingDay> => {
+export const getWeek = (config: GitToTempoConfig): WorkingDay[] => {
   const convertDayEntryToWorkingDay = dayEntryToWorkingDay(config);
   return compose<
     GitToTempoConfig,
@@ -62,5 +62,5 @@ export const getWeek = (config: GitToTempoConfig): NonEmptyArray<WorkingDay> => 
     sortBy<DayEntry>(head),
     toPairs,
     prop('workingHours')
-  )(config) as NonEmptyArray<WorkingDay>;
+  )(config);
 };

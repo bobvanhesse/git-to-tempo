@@ -79,7 +79,15 @@ const gitToTempo = require('git-to-tempo');
         },
         '3': {
           start: '09:00',
-          end: '13:00',
+          end: '17:00',
+        },
+        '4': {
+          start: '09:00',
+          end: '17:00',
+        },
+        '5': {
+          start: '09:00',
+          end: '17:00',
         },
       },
     });

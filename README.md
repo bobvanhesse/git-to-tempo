@@ -33,6 +33,20 @@ questionable as customly written entries. Whether you want to use the logs as
 a starting point or as a final report is completely up to you!
 
 ## Usage
+### Commit Formatting
+Not all commits are relevant for your time tracking. Commits that you want to include in your logs should start with the relevant issue key.
+
+Example of commit that is filtered out:
+```
+Fixed indenting, remove trailing comma's
+```
+
+Example of commit that will be included:
+```
+ABC-1234 Add unit tests
+```
+
+### Configuration
 In order to be able to use this module, you will need to import the `gitToTempo` function, and provide the configuration object.
 
 ```js

@@ -11,16 +11,20 @@ export const commitsToStories = curryN(2, (config: GitToTempoConfig, commits: Co
   return commits
     .filter(isFormattedCommit(config))
     .reverse()
-    .map((commit, commitIndex, commits) => ({
-      commit,
-      originTaskId: (commit.rawBody.match(getStoryRegEx(config)) as RegExpMatchArray)[1],
-      period: {
-        end: moment(commit.authorDate, DATE_FORMAT_GIT),
-        start: commitIndex > 0
-          ? moment(commits[commitIndex - 1].authorDate, DATE_FORMAT_GIT)
-          : moment(0, 'x')
-      },
-    }));
+    .map((commit, commitIndex, commits) => {
+      const storyRegEx = getStoryRegEx(config);
+      return {
+        commit,
+        comment: commit.rawBody.replace(storyRegEx, ''),
+        originTaskId: (commit.rawBody.match(storyRegEx) as RegExpMatchArray)[1],
+        period: {
+          end: moment(commit.authorDate, DATE_FORMAT_GIT),
+          start: commitIndex > 0
+            ? moment(commits[commitIndex - 1].authorDate, DATE_FORMAT_GIT)
+            : moment(0, 'x')
+        },
+      };
+    });
 })
 
 export const getStoryRegEx = (config: GitToTempoConfig): RegExp => {

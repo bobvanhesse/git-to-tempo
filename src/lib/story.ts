@@ -1,11 +1,10 @@
-import { Commit } from 'gitlog';
 import { curryN } from 'ramda';
 
 import { WorkingDay } from './config';
 import { TimePeriod } from './helpers';
 
 export interface Story {
-  commit: Commit;
+  comment: string;
   originTaskId: string;
   period: TimePeriod;
 }

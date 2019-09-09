@@ -18,7 +18,7 @@ export const DATE_FORMAT_TEMPO: Readonly<string> = 'YYYY-MM-DD';
 
 export const createLog = curryN(3, (config: GitToTempoConfig, story: Story, day: WorkingDay): Log => ({
   ...config.tempo,
-  comment: story.commit.rawBody,
+  comment: story.comment,
   originTaskId: story.originTaskId,
   started: day.start.format(DATE_FORMAT_TEMPO),
   timeSpentSeconds: firstMoment(story.period.end, day.end)

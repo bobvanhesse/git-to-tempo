@@ -14,7 +14,6 @@ export const commitsToStories = curryN(2, (config: GitToTempoConfig, commits: Co
     .map((commit, commitIndex, commits) => {
       const storyRegEx = getStoryRegEx(config);
       return {
-        commit,
         comment: commit.rawBody.replace(storyRegEx, ''),
         originTaskId: (commit.rawBody.match(storyRegEx) as RegExpMatchArray)[1],
         period: {

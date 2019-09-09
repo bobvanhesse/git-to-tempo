@@ -8,7 +8,7 @@ import { Story, storyWasInProgressOn } from './story';
 export interface Log {
   attributes?: Object;
   comment: string;
-  issueKey: string;
+  originTaskId: string;
   started: string;
   timeSpentSeconds: number;
   workerId: string;
@@ -19,7 +19,7 @@ export const DATE_FORMAT_TEMPO: Readonly<string> = 'YYYY-MM-DD';
 export const createLog = curryN(3, (config: GitToTempoConfig, story: Story, day: WorkingDay): Log => ({
   ...config.tempo,
   comment: story.commit.rawBody,
-  issueKey: story.issueKey,
+  originTaskId: story.originTaskId,
   started: day.start.format(DATE_FORMAT_TEMPO),
   timeSpentSeconds: firstMoment(story.period.end, day.end)
     .diff(lastMoment(day.start, story.period.start), 'second'),
@@ -27,7 +27,7 @@ export const createLog = curryN(3, (config: GitToTempoConfig, story: Story, day:
 
 const mergeDuplicatesReducer = (logs: Log[], log: Log): Log[] => {
   const updateLogIndex = logs.findIndex((compareLog) =>
-    ['issueKey', 'started'].every((prop) => propEq(prop, log, compareLog))
+    ['originTaskId', 'started'].every((prop) => propEq(prop, log, compareLog))
   );
   return updateLogIndex >= 0
     ? adjust(updateLogIndex, partial(mergeLogs, [log]), logs)

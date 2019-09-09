@@ -6,7 +6,7 @@ import { TimePeriod } from './helpers';
 
 export interface Story {
   commit: Commit;
-  issueKey: string;
+  originTaskId: string;
   period: TimePeriod;
 }
 

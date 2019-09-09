@@ -13,7 +13,7 @@ export const commitsToStories = curryN(2, (config: GitToTempoConfig, commits: Co
     .reverse()
     .map((commit, commitIndex, commits) => ({
       commit,
-      issueKey: (commit.rawBody.match(getStoryRegEx(config)) as RegExpMatchArray)[1],
+      originTaskId: (commit.rawBody.match(getStoryRegEx(config)) as RegExpMatchArray)[1],
       period: {
         end: moment(commit.authorDate, DATE_FORMAT_GIT),
         start: commitIndex > 0

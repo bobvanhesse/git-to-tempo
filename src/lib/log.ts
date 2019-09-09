@@ -1,8 +1,8 @@
-import { curryN, head, partial, prop, propEq, sum, map } from 'ramda';
-import { adjust } from 'ramda/src/adjust';
+import { curryN, eqProps, head, partial } from 'ramda';
+import adjust from 'ramda/src/adjust';
 
 import { GitToTempoConfig, getWeek, WorkingDay } from './config';
-import { firstMoment, lastMoment, NonOptionalKeys } from './helpers';
+import { firstMoment, lastMoment } from './helpers';
 import { Story, storyWasInProgressOn } from './story';
 
 export interface Log {
@@ -27,7 +27,7 @@ export const createLog = curryN(3, (config: GitToTempoConfig, story: Story, day:
 
 const mergeDuplicatesReducer = (logs: Log[], log: Log): Log[] => {
   const updateLogIndex = logs.findIndex((compareLog) =>
-    ['originTaskId', 'started'].every((prop) => propEq(prop, log, compareLog))
+    ['originTaskId', 'started'].every((prop) => eqProps(prop, log, compareLog))
   );
   return updateLogIndex >= 0
     ? adjust(updateLogIndex, partial(mergeLogs, [log]), logs)
@@ -35,19 +35,19 @@ const mergeDuplicatesReducer = (logs: Log[], log: Log): Log[] => {
 };
 
 export const mergeLogs = (...logs: Log[]): Log => {
-  const mapProp: <T extends NonOptionalKeys<Log>>(p: T) => Log[T][] = map(prop);
   return {
     ...head(logs) as Log,
-    timeSpentSeconds: sum(mapProp('timeSpentSeconds')),
-    comment: mapProp('comment').join(' '),
+    timeSpentSeconds: logs.reduce((time, log) => time + log.timeSpentSeconds, 0),
+    comment: logs.reduce((comment, log) => [comment, log.comment].join(' '), ''),
   };
 };
 
 export const storiesToLogs = curryN(2, (config: GitToTempoConfig, stories: Story[]): Log[] => {
-  return stories.flatMap((story) => {
-    return getWeek(config)
-      .filter((day) => storyWasInProgressOn(story, day))
-      .map<Log>((day) => createLog(config, story, day))
-      .reduce<Log[]>(mergeDuplicatesReducer, []);
-  })
+  return stories
+    .flatMap((story) => {
+      return getWeek(config)
+        .filter((day) => storyWasInProgressOn(story, day))
+        .map<Log>((day) => createLog(config, story, day));
+    })
+    .reduce<Log[]>(mergeDuplicatesReducer, []);
 });

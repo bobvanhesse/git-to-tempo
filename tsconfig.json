@@ -25,7 +25,7 @@
     "paths": {
       "*": ["./@types/*"],
       "ramda": ["./node_modules/@types/ramda/index"],
-      "ramda/src/*" : ["./node_modules/@types/ramda-fallback/index"]
+      "ramda/src/*" : ["./node_modules/@types/ramda-fallback/src/*"]
     },
     "removeComments": true,
     "rootDir": "src",

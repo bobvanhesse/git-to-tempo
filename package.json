@@ -18,6 +18,7 @@
   ],
   "scripts": {
     "build": "tsc -p .",
+    "prepare": "npm run build",
     "test": "true"
   },
   "author": "Bob van Hesse <bob@vanhesse.nl>",

@@ -60,7 +60,7 @@ const gitToTempo = require('git-to-tempo');
         projectPath: '/path/to/project/root/directory',
       },
       locale: 'nl',
-      prefix: 'ABC',
+      prefixes: ['PROJ', 'SUPPORT'],
       reportingPeriod: {
         week: 1,
         year: 2000,

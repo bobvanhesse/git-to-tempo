@@ -14,7 +14,7 @@ export interface GitConfig {
 export interface GitToTempoConfig {
   git: GitConfig;
   locale?: string;
-  prefix: string;
+  prefixes: string[];
   reportingPeriod: YearWeek;
   tempo: TempoConfig;
   workingHours: WorkingSchedule;

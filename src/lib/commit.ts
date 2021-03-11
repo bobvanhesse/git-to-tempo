@@ -27,7 +27,10 @@ export const commitsToStories = curryN(2, (config: GitToTempoConfig, commits: Co
 })
 
 export const getStoryRegEx = (config: GitToTempoConfig): RegExp => {
-  return new RegExp(`^\\s*(${config.prefix}-\\d+):?\\s+`);
+  if(config.prefixes.length === 0) {
+    throw new Error('Provide at least one prefix in the configuration.');
+  }
+  return new RegExp(`^\\s*((${config.prefixes.join('|')})-\\d+):?\\s+`);
 };
 
 export const isFormattedCommit = curryN(2, (config: GitToTempoConfig, commit: Commit): boolean => {

@@ -1,8 +1,9 @@
+import { default as moment, Moment } from 'moment';
 import { curryN, eqProps, head, partial } from 'ramda';
 import adjust from 'ramda/src/adjust';
 
-import { getWorkingDays, GitToTempoConfig } from './config';
-import { firstMoment, lastMoment, TimePeriod } from './helpers';
+import { DATETIME_FORMAT_CONFIG, DATE_FORMAT_CONFIG, DAY_FORMAT_CONFIG, getWorkingDays, GitToTempoConfig } from './config';
+import { Period, TimePeriod } from './helpers';
 import { Story, storyWasInProgressOn } from './story';
 
 export interface Log {
@@ -14,16 +15,22 @@ export interface Log {
   workerId: string;
 }
 
-export const DATE_FORMAT_TEMPO: string = 'YYYY-MM-DD';
+export const DATETIME_FORMAT_TEMPO: string = 'YYYY-MM-DDTHH:mm:ss.SSS';
 
-export const createLog = curryN(3, (config: GitToTempoConfig, story: Story, day: TimePeriod): Log => ({
-  ...config.tempo,
-  comment: story.comment,
-  originTaskId: story.originTaskId,
-  started: day.start.format(DATE_FORMAT_TEMPO),
-  timeSpentSeconds: firstMoment(story.period.end, day.end)
-    .diff(lastMoment(day.start, story.period.start), 'second'),
-}));
+export const createLog = curryN(3, (config: GitToTempoConfig, story: Story, day: TimePeriod): Log => {
+  const todaysWorkingHours: Period<string> = config.workingHours[day.start.format(DAY_FORMAT_CONFIG)];
+  const todaysDate: string = day.start.format(DATE_FORMAT_CONFIG);
+  const todaysStart: Moment = moment(`${todaysDate}T${todaysWorkingHours.start}`, DATETIME_FORMAT_CONFIG);
+  return {
+    ...config.tempo,
+    comment: story.comment,
+    originTaskId: story.originTaskId,
+    started: moment.max(todaysStart, story.period.start)
+      .format(DATETIME_FORMAT_TEMPO),
+    timeSpentSeconds: moment.min(story.period.end, day.end)
+      .diff(moment.max(day.start, story.period.start), 'second'),
+  };
+});
 
 const mergeDuplicatesReducer = (logs: Log[], log: Log): Log[] => {
   const updateLogIndex = logs.findIndex((compareLog) =>

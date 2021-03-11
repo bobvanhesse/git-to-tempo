@@ -1,8 +1,8 @@
 import { curryN, eqProps, head, partial } from 'ramda';
 import adjust from 'ramda/src/adjust';
 
-import { GitToTempoConfig, getWeek, WorkingDay } from './config';
-import { firstMoment, lastMoment } from './helpers';
+import { getWorkingDays, GitToTempoConfig } from './config';
+import { firstMoment, lastMoment, TimePeriod } from './helpers';
 import { Story, storyWasInProgressOn } from './story';
 
 export interface Log {
@@ -14,9 +14,9 @@ export interface Log {
   workerId: string;
 }
 
-export const DATE_FORMAT_TEMPO: Readonly<string> = 'YYYY-MM-DD';
+export const DATE_FORMAT_TEMPO: string = 'YYYY-MM-DD';
 
-export const createLog = curryN(3, (config: GitToTempoConfig, story: Story, day: WorkingDay): Log => ({
+export const createLog = curryN(3, (config: GitToTempoConfig, story: Story, day: TimePeriod): Log => ({
   ...config.tempo,
   comment: story.comment,
   originTaskId: story.originTaskId,
@@ -45,7 +45,7 @@ export const mergeLogs = (...logs: Log[]): Log => {
 export const storiesToLogs = curryN(2, (config: GitToTempoConfig, stories: Story[]): Log[] => {
   return stories
     .flatMap((story) => {
-      return getWeek(config)
+      return getWorkingDays(config)
         .filter((day) => storyWasInProgressOn(story, day))
         .map<Log>((day) => createLog(config, story, day));
     })

@@ -1,6 +1,5 @@
 import { curryN } from 'ramda';
 
-import { WorkingDay } from './config';
 import { TimePeriod } from './helpers';
 
 export interface Story {
@@ -9,6 +8,6 @@ export interface Story {
   period: TimePeriod;
 }
 
-export const storyWasInProgressOn = curryN(2, (story: Story, day: WorkingDay): boolean => {
+export const storyWasInProgressOn = curryN(2, (story: Story, day: TimePeriod): boolean => {
   return story.period.start.isBefore(day.end) && story.period.end.isAfter(day.start);
 });

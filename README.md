@@ -62,8 +62,8 @@ const gitToTempo = require('git-to-tempo');
       locale: 'nl',
       prefixes: ['PROJ', 'SUPPORT'],
       reportingPeriod: {
-        week: 1,
-        year: 2000,
+        start: '2020-01-01T00:00',
+        end: '2020-12-31T23:59',
       },
       tempo: {
         workerId: '1a23bcd4e56fg78h901i2j34',

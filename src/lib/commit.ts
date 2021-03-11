@@ -24,7 +24,7 @@ export const commitsToStories = curryN(2, (config: GitToTempoConfig, commits: Co
         },
       };
     });
-})
+});
 
 export const getStoryRegEx = (config: GitToTempoConfig): RegExp => {
   if(config.prefixes.length === 0) {

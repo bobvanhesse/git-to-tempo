@@ -1,10 +1,6 @@
 import { default as moment } from 'moment';
-import { curryN, compose, head, map, prop, sortBy, toPairs } from 'ramda';
-import { RequireAtLeastOne } from 'type-fest';
 
 import { Period, TimePeriod } from './helpers';
-
-type DayEntry = [string, StaticWorkingDay];
 
 export interface GitConfig {
   author: string;
@@ -15,52 +11,45 @@ export interface GitToTempoConfig {
   git: GitConfig;
   locale?: string;
   prefixes: string[];
-  reportingPeriod: YearWeek;
+  reportingPeriod: Period<string>;
   tempo: TempoConfig;
   workingHours: WorkingSchedule;
 }
-
-export type StaticWorkingDay = Period<string>;
 
 export interface TempoConfig {
   attributes?: Object;
   workerId: string;
 }
 
-export type WeekDayNumber = '1' | '2' | '3' | '4' | '5' | '6' | '7';
-
-export type WorkingDay = TimePeriod;
-
-export type WorkingSchedule = RequireAtLeastOne<{
-  [D in WeekDayNumber]: StaticWorkingDay;
-}>;
+export type WorkingSchedule = {
+  [day: string]: Period<string>;
+};
 
 export interface YearWeek {
   week: number;
   year: number;
 }
 
-const dayEntryToWorkingDay = curryN(2, (config: GitToTempoConfig, [day, timePeriod]: DayEntry): WorkingDay => {
-  return map((time: string) => {
-    return moment(
-      `${config.reportingPeriod.year}.${config.reportingPeriod.week}.${day} ${time}`,
-      'YYYY.W.E HH:mm'
-    );
-  }, timePeriod);
-});
+export const DAY_FORMAT_CONFIG: string = 'E';
+export const DATE_FORMAT_CONFIG: string = 'YYYY-MM-DD';
+export const TIME_FORMAT_CONFIG: string = 'HH:mm';
+export const DATETIME_FORMAT_CONFIG: string = `${DATE_FORMAT_CONFIG}T${TIME_FORMAT_CONFIG}`;
 
-export const getWeek = (config: GitToTempoConfig): WorkingDay[] => {
-  const convertDayEntryToWorkingDay = dayEntryToWorkingDay(config);
-  return compose<
-    GitToTempoConfig,
-    WorkingSchedule,
-    DayEntry[],
-    DayEntry[],
-    WorkingDay[]
-  >(
-    map(convertDayEntryToWorkingDay),
-    sortBy<DayEntry>(head),
-    toPairs,
-    prop('workingHours')
-  )(config);
+export const getWorkingDays = (config: GitToTempoConfig): TimePeriod[] => {
+  const currentDate = moment(config.reportingPeriod.start, DATETIME_FORMAT_CONFIG).startOf('day');
+  const stopAtDate = moment(config.reportingPeriod.end, DATETIME_FORMAT_CONFIG).startOf('day');
+  const workingDays: TimePeriod[] = [];
+
+  do {
+    const day = currentDate.format(DAY_FORMAT_CONFIG);
+    if(day in config.workingHours) {
+      const date: string  = currentDate.format(DATE_FORMAT_CONFIG);
+      workingDays.push({
+        start: moment.max(moment(config.reportingPeriod.start, DATETIME_FORMAT_CONFIG), moment(`${date}T${config.workingHours[day].start}`, DATETIME_FORMAT_CONFIG)),
+        end: moment.min(moment(config.reportingPeriod.end, DATETIME_FORMAT_CONFIG), moment(`${date}T${config.workingHours[day].end}`, DATETIME_FORMAT_CONFIG)),
+      })
+    }
+  } while(currentDate.add(1, 'days').diff(stopAtDate) <= 0);
+
+  return workingDays;
 };

@@ -56,5 +56,6 @@ export const storiesToLogs = curryN(2, (config: GitToTempoConfig, stories: Story
         .filter((day) => storyWasInProgressOn(story, day))
         .map<Log>((day) => createLog(config, story, day));
     })
-    .reduce<Log[]>(mergeDuplicatesReducer, []);
+    .reduce<Log[]>(mergeDuplicatesReducer, [])
+    .filter((log) => log.timeSpentSeconds > 0);
 });

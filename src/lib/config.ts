@@ -47,7 +47,7 @@ export const getWorkingDays = (config: GitToTempoConfig): TimePeriod[] => {
       workingDays.push({
         start: moment.max(moment(config.reportingPeriod.start, DATETIME_FORMAT_CONFIG), moment(`${date}T${config.workingHours[day].start}`, DATETIME_FORMAT_CONFIG)),
         end: moment.min(moment(config.reportingPeriod.end, DATETIME_FORMAT_CONFIG), moment(`${date}T${config.workingHours[day].end}`, DATETIME_FORMAT_CONFIG)),
-      })
+      });
     }
   } while(currentDate.add(1, 'days').diff(stopAtDate) <= 0);
 

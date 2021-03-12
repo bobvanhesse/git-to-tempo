@@ -1,4 +1,4 @@
-import { default as moment } from 'moment';
+import { default as moment, DurationInputObject } from 'moment';
 
 import { Period, TimePeriod } from './helpers';
 
@@ -12,6 +12,7 @@ export interface GitToTempoConfig {
   locale?: string;
   prefixes: string[];
   reportingPeriod: Period<string>;
+  roundTo?: DurationInputObject | number;
   tempo: TempoConfig;
   workingHours: WorkingSchedule;
 }

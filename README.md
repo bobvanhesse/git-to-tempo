@@ -1,5 +1,5 @@
 # Git to Tempo
-Converts your git log into Tempo entries based on your working hours.
+Converts your git commits into [Tempo entries](https://www.tempo.io/server-api-documentation/timesheets#tag/Worklogs) based on your working hours.
 
 [![Build Status](https://travis-ci.org/bobvanhesse/git-to-tempo.svg?branch=master)](https://travis-ci.org/bobvanhesse/git-to-tempo)
 

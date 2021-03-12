@@ -20,7 +20,7 @@ const configToGitLogOptions = (config: GitToTempoConfig): GitLogOptions => {
     execOptions: {
       maxBuffer: 10 ** 3 * 2 ** 10,
     },
-    fields: ['authorDate', 'committerDate', 'rawBody'],
+    fields: ['committerDate', 'rawBody'],
     nameStatus: false,
     number: 10 ** 3,
     repo: config.git.projectPath,

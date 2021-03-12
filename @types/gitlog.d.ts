@@ -1,5 +1,6 @@
 declare module 'gitlog' {
   export interface Commit {
+    committerDate: string;
     authorDate: string;
     rawBody: string;
   }

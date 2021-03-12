@@ -1,12 +1,14 @@
-import gitlog, { Commit, GitLogOptions } from 'gitlog';
+import gitlog, { GitLogOptions } from 'gitlog';
 import { default as moment } from 'moment';
 import { compose, head, last } from 'ramda';
 
 import { Log, storiesToLogs } from './lib/log';
 import { getWorkingDays, GitToTempoConfig } from './lib/config';
-import { commitsToStories, DATE_FORMAT_GIT } from './lib/commit';
+import { Commit, commitsToStories } from './lib/commit';
 import { Story } from './lib/story';
 import { TimePeriod } from './lib/helpers';
+
+export const DATE_FORMAT_GIT: string = 'YYYY-MM-DD HH:mm:ss ZZ';
 
 const configToGitLogOptions = (config: GitToTempoConfig): GitLogOptions => {
   const workingDays: TimePeriod[] = getWorkingDays(config);
@@ -19,7 +21,7 @@ const configToGitLogOptions = (config: GitToTempoConfig): GitLogOptions => {
     execOptions: {
       maxBuffer: 10 ** 3 * 2 ** 10,
     },
-    fields: ['authorDate', 'rawBody'],
+    fields: ['authorDate', 'committerDate', 'rawBody'],
     nameStatus: false,
     number: 10 ** 3,
     repo: config.git.projectPath,

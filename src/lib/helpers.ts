@@ -1,5 +1,5 @@
-import { default as moment, duration, DurationInputObject, Moment } from 'moment';
-import { curryN } from 'ramda';
+import { add, Duration, Interval, parse } from 'date-fns';
+import { curryN, mapObjIndexed } from 'ramda';
 
 export type NonOptionalKeys<T> = {
   [k in keyof T]-?: undefined extends T[k]
@@ -7,16 +7,24 @@ export type NonOptionalKeys<T> = {
     : k
 }[keyof T];
 
-export interface Period<T> {
-  start: T;
-  end: T;
-}
+export type ConfigInterval = Record<keyof Interval, string>;
 
-export type TimePeriod = Period<Moment>;
+export type Shift<T extends Array<any>> = ((...a: T) => any) extends ((a: any, ...result: infer Result) => any) 
+  ? Result 
+  : never;
 
-export const roundMomentTo = curryN(2, (to: DurationInputObject | number, momentObj: Readonly<Moment>): Moment => {
-  const timeStamp: number = momentObj.unix();
-  const roundToSeconds: number = typeof to === "number" ? to : duration(to).asSeconds();
-  const roundedTimeStamp = Math.round(timeStamp / roundToSeconds) * roundToSeconds;
-  return moment.unix(roundedTimeStamp);
+export type UnaryOperator<T> = (x: T) => T;
+
+export const parseInterval = (interval: ConfigInterval, ...parseParams: Shift<Parameters<typeof parse>>): Interval => mapObjIndexed(
+  (time) => parse(time, ...parseParams),
+  interval
+);
+
+export const roundDateTo = curryN(2, (to: Duration | number, date: Readonly<Date>): Date => {
+  const timeStamp: number = date.getTime();
+  const roundToMilliseconds: number = typeof to === "number"
+    ? to * 1000
+    : add(0, to).getTime();
+  const roundedTimeStamp = Math.round(timeStamp / roundToMilliseconds) * roundToMilliseconds;
+  return new Date(roundedTimeStamp);
 });

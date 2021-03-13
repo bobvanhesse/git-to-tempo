@@ -59,7 +59,6 @@ const gitToTempo = require('git-to-tempo');
         author: 'Your Name',
         projectPath: '/path/to/project/root/directory',
       },
-      locale: 'nl',
       prefixes: ['PROJ', 'SUPPORT'],
       reportingPeriod: {
         start: '2020-01-01T00:00',

@@ -1,23 +1,23 @@
+import { add, format, Interval } from 'date-fns';
 import gitlog, { GitLogOptions } from 'gitlog';
-import { default as moment } from 'moment';
 import { compose, head, last } from 'ramda';
 
 import { Log, storiesToLogs } from './lib/log';
 import { getWorkingDays, GitToTempoConfig } from './lib/config';
 import { Commit, commitsToStories } from './lib/commit';
 import { Story } from './lib/story';
-import { TimePeriod } from './lib/helpers';
 
-export const DATE_FORMAT_GIT: string = 'YYYY-MM-DD HH:mm:ss ZZ';
+export const DATE_FORMAT_GIT = 'yyyy-MM-dd';
 
 const configToGitLogOptions = (config: GitToTempoConfig): GitLogOptions => {
-  const workingDays: TimePeriod[] = getWorkingDays(config);
+  const workingDays: Interval[] = getWorkingDays(config);
   return {
     all: true,
     author: config.git.author,
-    before: (last(workingDays) as TimePeriod).end
-      .add(1, 'week')
-      .format(DATE_FORMAT_GIT),
+    before: format(
+      add((last(workingDays) as Interval).end, {weeks: 1}),
+      DATE_FORMAT_GIT
+    ),
     execOptions: {
       maxBuffer: 10 ** 3 * 2 ** 10,
     },
@@ -25,16 +25,14 @@ const configToGitLogOptions = (config: GitToTempoConfig): GitLogOptions => {
     nameStatus: false,
     number: 10 ** 3,
     repo: config.git.projectPath,
-    since: (head(workingDays) as TimePeriod).start
-      .format(DATE_FORMAT_GIT),
+    since: format(
+      (head(workingDays) as Interval).start,
+      DATE_FORMAT_GIT
+    ),
   };
 };
 
 export const gitToTempo = async (config: Readonly<GitToTempoConfig>): Promise<Log[]> => {
-  if(config.locale) {
-    await import(`moment/locale/${config.locale}`);
-    moment.locale(config.locale);
-  }
   return new Promise((resolve, reject) => {
     gitlog(
       configToGitLogOptions(config),

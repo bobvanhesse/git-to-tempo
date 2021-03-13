@@ -26,8 +26,8 @@
   "dependencies": {
     "@types/ramda": "github:ikatyang/types-ramda#v0.24.1-dist",
     "@types/ramda-fallback": "https://registry.npmjs.org/@types/ramda/-/ramda-0.26.21.tgz",
+    "date-fns": "2.19.0",
     "gitlog": "3.1.2",
-    "moment": "2.29.1",
     "ramda": "0.26.1",
     "tslib": "2.1.0",
     "typescript": "3.4.3"

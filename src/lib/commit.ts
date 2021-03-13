@@ -1,19 +1,19 @@
+import { parse } from 'date-fns';
 import { Commit as GitLogCommit } from 'gitlog';
-import { default as moment, Moment } from 'moment';
 import { curryN, identity } from 'ramda';
 
 import { GitToTempoConfig } from './config';
-import { roundMomentTo } from './helpers';
+import { roundDateTo, UnaryOperator } from './helpers';
 import { Story } from './story';
 
 export type Commit = Pick<GitLogCommit, 'committerDate' | 'rawBody'>;
 
-export const DATE_FORMAT_GIT_COMMITTERDATE: string = 'ddd MMM D HH:mm:ss YYYY Z';
+export const DATE_FORMAT_GIT_COMMITTERDATE: string = 'EEE MMM d HH:mm:ss y XX';
 
-const createRound = (config: GitToTempoConfig): (x: Moment) => Moment => {
+const createRound = (config: GitToTempoConfig): UnaryOperator<Date> => {
   return typeof config.roundTo === 'undefined'
     ? identity
-    : roundMomentTo(config.roundTo);
+    : roundDateTo(config.roundTo);
 };
 
 export const commitsToStories = curryN(2, (config: GitToTempoConfig, commits: Commit[]): Story[] => {
@@ -27,10 +27,10 @@ export const commitsToStories = curryN(2, (config: GitToTempoConfig, commits: Co
         comment: commit.rawBody.replace(storyRegEx, ''),
         originTaskId: (commit.rawBody.match(storyRegEx) as RegExpMatchArray)[1],
         period: {
-          end: round(moment(commit.committerDate, DATE_FORMAT_GIT_COMMITTERDATE)),
+          end: round(parse(commit.committerDate, DATE_FORMAT_GIT_COMMITTERDATE, new Date())),
           start: commitIndex > 0
-            ? round(moment(commits[commitIndex - 1].committerDate, DATE_FORMAT_GIT_COMMITTERDATE))
-            : moment(0, 'x')
+            ? round(parse(commits[commitIndex - 1].committerDate, DATE_FORMAT_GIT_COMMITTERDATE, new Date()))
+            : new Date(0)
         },
       };
     });

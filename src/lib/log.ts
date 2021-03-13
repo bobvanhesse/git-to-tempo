@@ -1,6 +1,5 @@
 import { differenceInSeconds, format, Interval, max, min, parse } from 'date-fns';
-import { curryN, eqProps, head, partial } from 'ramda';
-import adjust from 'ramda/src/adjust';
+import { adjust, curryN, eqProps, head, partial } from 'ramda';
 
 import { TIME_FORMAT_CONFIG, DAY_FORMAT_CONFIG, getWorkingDays, GitToTempoConfig } from './config';
 import { ConfigInterval } from './helpers';

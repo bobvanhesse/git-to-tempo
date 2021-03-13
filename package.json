@@ -24,13 +24,12 @@
   "author": "Bob van Hesse <bob@vanhesse.nl>",
   "license": "UNLICENSED",
   "dependencies": {
-    "@types/ramda": "github:ikatyang/types-ramda#v0.24.1-dist",
-    "@types/ramda-fallback": "https://registry.npmjs.org/@types/ramda/-/ramda-0.26.21.tgz",
+    "@types/ramda": "0.27.38",
     "date-fns": "2.19.0",
     "gitlog": "3.1.2",
-    "ramda": "0.26.1",
+    "ramda": "0.27.1",
     "tslib": "2.1.0",
-    "typescript": "3.4.3"
+    "typescript": "4.2.3"
   },
   "repository": {
     "type": "git",

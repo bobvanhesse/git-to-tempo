@@ -1,6 +1,6 @@
 {
   "name": "git-to-tempo",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Convert your git history to Tempo time tracking logs",
   "keywords": [
     "atlassian",

@@ -1,12 +1,6 @@
 import { add, Duration, Interval, parse } from 'date-fns';
 import { curryN, mapObjIndexed } from 'ramda';
 
-export type NonOptionalKeys<T> = {
-  [k in keyof T]-?: undefined extends T[k]
-    ? never
-    : k
-}[keyof T];
-
 export type ConfigInterval = Record<keyof Interval, string>;
 
 export type Shift<T extends Array<any>> = ((...a: T) => any) extends ((a: any, ...result: infer Result) => any) 

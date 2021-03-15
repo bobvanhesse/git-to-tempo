@@ -24,11 +24,6 @@ export type WorkingSchedule = {
   [day: string]: ConfigInterval;
 };
 
-export interface YearWeek {
-  week: number;
-  year: number;
-}
-
 export const DAY_FORMAT_CONFIG = 'i';
 export const DATE_FORMAT_CONFIG = 'yyyy-MM-dd';
 export const TIME_FORMAT_CONFIG = 'HH:mm';
